@@ -2,8 +2,8 @@
 from __future__ import division
 from __future__ import print_function
 """
-This file serves as an example of how to 
-a) select a problem to be solved 
+This file serves as an example of how to
+a) select a problem to be solved
 b) select a network type
 c) train the network to minimize recovery MSE
 

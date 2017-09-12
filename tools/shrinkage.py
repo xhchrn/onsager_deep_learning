@@ -179,7 +179,7 @@ def get_shrinkage_function(name):
 			'expo':(shrink_expo, (2.5,.9,-1) ),
 			'spline':(shrink_spline, (3.7,.9,-1.5))
 		}[name]
-	except KeyError,ke:
+	except KeyError as ke:
 		raise ValueError('unrecognized shrink function %s' % name)
 		sys.exit(1)
 
@@ -246,7 +246,7 @@ def test_func(shrink_func,theta,**kwargs):
 
     tf.reset_default_graph()
     estname = re.sub('.*shrink_([^ ]*).*','\\1', repr(shrink_func) )
-    print '####   %s loss=%g \ttheta=%s' % (estname,loss_cur,repr(theta))
+    print('####   %s loss=%g \ttheta=%s' % (estname,loss_cur,repr(theta)))
     if False:
         import matplotlib.pyplot as plt
         plt.figure(1)
@@ -294,7 +294,7 @@ if __name__ == "__main__":
     try:
         opts,args = getopt.getopt(sys.argv[1:] , 'hp:s:f:')
         opts = dict(opts)
-    except getopt.GetoptError,e:
+    except getopt.GetoptError as e:
         opts={'-h':True}
     if opts.has_key('-h'):
         sys.stderr.write(usage)

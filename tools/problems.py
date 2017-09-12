@@ -33,7 +33,7 @@ class NumpyGenerator(Generator):
 def bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=None,SNR=40):
 
     A = np.random.normal(size=(M, N), scale=1.0 / math.sqrt(M)).astype(np.float32)
-    if kappa >= 1:
+    if kappa != None and kappa >= 1:
         # create a random operator with a specific condition number
         U,_,V = la.svd(A,full_matrices=False)
         s = np.logspace( 0, np.log10( 1/kappa),M)
