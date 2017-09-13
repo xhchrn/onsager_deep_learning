@@ -26,8 +26,9 @@ def save_problem(base,prob):
 save_problem('problem_Giid',problems.bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=None,SNR=40))
 save_problem('problem_k15',problems.bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=15,SNR=40))
 save_problem('problem_k100',problems.bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=100,SNR=40))
-save_problem('problem_rap1',problems.random_access_problem(1))
-save_problem('problem_rap2',problems.random_access_problem(2))
+save_problem('problem_k1000',problems.bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=1000,SNR=40))
+# save_problem('problem_rap1',problems.random_access_problem(1))
+# save_problem('problem_rap2',problems.random_access_problem(2))
 
 
 
