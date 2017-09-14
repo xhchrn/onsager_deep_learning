@@ -1,7 +1,5 @@
 % simulation parameters
 
-clear;
-
 % if you do not have these .mat files, run:
 %       python save_problem.py      
 % (requires: python, tensorflow, scipy )
@@ -9,7 +7,7 @@ clear;
 %load problem_k2.mat;disp('loaded kappa=2 problem')
 %load problem_k3.mat;disp('loaded kappa=3 problem')
 %load problem_k3d5.mat;disp('loaded kappa=3.5 problem')
-load problem_k4.mat;disp('loaded kappa=4 problem')
+%load problem_k4.mat;disp('loaded kappa=4 problem')
 %load problem_k4d5.mat;disp('loaded kappa=4.5 problem')
 %load problem_k5.mat;disp('loaded kappa=5 problem')
 %load problem_k15.mat;disp('loaded kappa=15 problem')
