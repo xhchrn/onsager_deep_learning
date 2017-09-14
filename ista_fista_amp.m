@@ -1,10 +1,20 @@
 % simulation parameters
 
+clear;
+
 % if you do not have these .mat files, run:
 %       python save_problem.py      
 % (requires: python, tensorflow, scipy )
-load problem_Giid.mat;disp('loaded Gaussian A problem')
+%load problem_Giid.mat;disp('loaded Gaussian A problem')
+%load problem_k2.mat;disp('loaded kappa=2 problem')
+%load problem_k3.mat;disp('loaded kappa=3 problem')
+%load problem_k3d5.mat;disp('loaded kappa=3.5 problem')
+load problem_k4.mat;disp('loaded kappa=4 problem')
+%load problem_k4d5.mat;disp('loaded kappa=4.5 problem')
+%load problem_k5.mat;disp('loaded kappa=5 problem')
 %load problem_k15.mat;disp('loaded kappa=15 problem')
+%load problem_k100.mat;disp('loaded kappa=100 problem')
+%load problem_k1000.mat;disp('loaded kappa=1000 problem')
 L = size(x,2);
 [M,N] = size(A);
 Afro2 = norm(A,'fro')^2;
