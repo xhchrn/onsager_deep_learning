@@ -60,13 +60,13 @@ def build_LAMP(prob,T,shrink,untied):
 
     if getattr(prob,'iid',True) == False:
         # set up individual parameters for every coordinate
-        theta_init = theta_init*np.ones( (N,1),dtype=np.float32 )
-    theta_ = tf.Variable(theta_init,dtype=tf.float32,name='theta_0')
+        theta_init = theta_init * np.ones( (N,1),dtype=np.float32 )
+    theta_ = tf.Variable(theta_init, dtype=tf.float32,name='theta_0')
     OneOverM = tf.constant(float(1)/M,dtype=tf.float32)
     NOverM = tf.constant(float(N)/M,dtype=tf.float32)
     rvar_ = tf.reduce_sum(tf.square(prob.y_),0) * OneOverM
     (xhat_,dxdr_) = eta( By_,rvar_ , theta_ )
-    layers.append( ('LAMP-{0} T=1'.format(shrink),xhat_,(theta_,) ) )
+    layers.append( ('LAMP-{0} T=1'.format(shrink), xhat_, (theta_,) ) )
 
     vt_ = prob.y_
     for t in range(1,T):
@@ -77,7 +77,7 @@ def build_LAMP(prob,T,shrink,untied):
         rvar_ = tf.reduce_sum(tf.square(vt_),0) * OneOverM
         theta_ = tf.Variable(theta_init,name='theta_'+str(t))
         if untied:
-            B_ =  tf.Variable(B,dtype=tf.float32,name='B_'+str(t))
+            B_ =  tf.Variable(B,dtype=tf.float32, name='B_'+str(t))
             rhat_ = xhat_ + tf.matmul(B_,vt_)
             layers.append( ('LAMP-{0} linear T={1}'.format(shrink,t+1),rhat_ ,(B_,) ) )
         else:

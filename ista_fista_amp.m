@@ -5,7 +5,7 @@
 % (requires: python, tensorflow, scipy )
 %load problem_Giid.mat;disp('loaded Gaussian A problem')
 %load problem_k2.mat;disp('loaded kappa=2 problem')
-%load problem_k3.mat;disp('loaded kappa=3 problem')
+load problem_k1.0.mat;disp('loaded kappa=3 problem')
 %load problem_k3d5.mat;disp('loaded kappa=3.5 problem')
 %load problem_k4.mat;disp('loaded kappa=4 problem')
 %load problem_k4d5.mat;disp('loaded kappa=4.5 problem')

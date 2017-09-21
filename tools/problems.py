@@ -57,6 +57,36 @@ def bernoulli_gaussian_trial(M=250,N=500,L=1000,pnz=.1,kappa=None,SNR=40):
 
     return prob
 
+def read_prob_from_npz(infile):
+
+    D       = np.load(infile)
+    A       = D['A']
+    A_      = tf.constant(A, name='A')
+    xval    = D['x']
+    yval    = D['y']
+    kappa   = D['kappa']
+    pnz     = D['pnz']
+    SNR     = D['SNR']
+    prob    = TFGenerator(A=A, A_=A_, pnz=pnz, kappa=kappa, SNR=SNR)
+    prob.name = 'Bernoulli-Gaussian, random A'
+
+    M, N = A.shape
+    _, L = xval.shape
+
+    bernoulli_ = tf.to_float( tf.random_uniform( (N,L) ) < pnz )
+    xgen_ = bernoulli_ * tf.random_normal( (N,L) )
+    noise_var = pnz*N/M * math.pow(10., -SNR / 10.)
+    ygen_ = tf.matmul( A_,xgen_ ) + tf.random_normal( (M,L), stddev=math.sqrt( noise_var ) )
+
+    prob.xval = xval
+    prob.yval = yval
+    prob.xinit = ((np.random.uniform( 0,1,(N,L) ) < pnz) * np.random.normal(0,1,(N,L))).astype(np.float32)
+    prob.yinit = np.matmul(A,prob.xinit) + np.random.normal(0,math.sqrt( noise_var ),(M,L))
+    prob.xgen_ = xgen_
+    prob.ygen_ = ygen_
+
+    return prob
+
 def random_access_problem(which=1):
     import raputil as ru
     if which == 1:

@@ -2,3 +2,6 @@
 *.npz
 *.mat
 *.swp
+.ipynb
+.ipynb_checkpoints/
+probs/
