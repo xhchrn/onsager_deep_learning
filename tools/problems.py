@@ -87,6 +87,15 @@ def read_prob_from_npz(infile):
 
     return prob
 
+def save_problem(base, prob, ftype='npz'):
+    print('saving {b}.mat,{b}.npz norm(x)={x:.7f} norm(y)={y:.7f}'.format(b=base,x=la.norm(prob.xval), y=la.norm(prob.yval) ) )
+    print('kappa number of matrix A is: {}'.format(np.linalg.cond(prob.A)))
+    D=dict(A=prob.A, x=prob.xval, y=prob.yval, kappa=prob.kappa, SNR=prob.SNR, pnz=prob.pnz)
+    if ftype == 'npz':
+        np.savez(base + '.npz', **D)
+    else:
+        savemat(base + '.mat',D,oned_as='column')
+
 def random_access_problem(which=1):
     import raputil as ru
     if which == 1:
