@@ -72,7 +72,7 @@ def setup_training(layer_info,prob, trinit=1e-3,refinements=(.5,.1,.01),final_re
     return training_stages
 
 
-def do_training(training_stages,prob,savefile,ivl=10,maxit=1000000,better_wait=5000):
+def do_training(training_stages,prob,savefile,ivl=10,maxit=400000,better_wait=5000):
     """
     ivl:how often should we compute the nmse of the validation set?
     maxit: max number of training iterations
