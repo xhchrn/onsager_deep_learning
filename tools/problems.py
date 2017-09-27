@@ -84,6 +84,7 @@ def read_prob_from_npz(infile):
     prob.yinit = np.matmul(A,prob.xinit) + np.random.normal(0,math.sqrt( noise_var ),(M,L))
     prob.xgen_ = xgen_
     prob.ygen_ = ygen_
+    prob.noise_var = pnz * N/M * math.pow(10., -SNR/10.)
 
     return prob
 
