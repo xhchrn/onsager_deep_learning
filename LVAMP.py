@@ -21,7 +21,7 @@ tf.set_random_seed(1) # on the other hand, this is basically useless (see issue 
 from tools import problems,networks,train
 
 # Create the basic problem structure.
-prob = problems.bernoulli_gaussian_trial(kappa=None,M=250,N=500,L=1000,pnz=.1,SNR=40) #a Bernoulli-Gaussian x, noisily observed through a random matrix
+prob = problems.bernoulli_gaussian_trial(kappa=5,M=25,N=50,L=500,pnz=.1,SNR=40) #a Bernoulli-Gaussian x, noisily observed through a random matrix
 #prob = problems.random_access_problem(2) # 1 or 2 for compressive random access or massive MIMO
 
 # build an LVAMP network to solve the problem and get the intermediate results so we can greedily extend and then refine(fine-tune)

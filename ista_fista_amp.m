@@ -1,11 +1,11 @@
 % simulation parameters
 
 % if you do not have these .mat files, run:
-%       python save_problem.py      
+%       python save_problem.py
 % (requires: python, tensorflow, scipy )
 %load problem_Giid.mat;disp('loaded Gaussian A problem')
 %load problem_k2.mat;disp('loaded kappa=2 problem')
-load problem_k1.0.mat;disp('loaded kappa=3 problem')
+load problem_k04.0_1.mat;
 %load problem_k3d5.mat;disp('loaded kappa=3.5 problem')
 %load problem_k4.mat;disp('loaded kappa=4 problem')
 %load problem_k4d5.mat;disp('loaded kappa=4.5 problem')
@@ -30,11 +30,11 @@ Ti = 1e3; % FISTA iterations
 Tii = 1e4; % ISTA iterations
 alf = 1.1402; % amp tuning parameter [1.1402]
 nmse_dB_report = -35;
-eta = @(r,lam) sign(r).*max(bsxfun(@minus,abs(r),lam),0); 
-tqq = 10; tqqi = 100; tqqii = 1000; % iteration for qqplot 
+eta = @(r,lam) sign(r).*max(bsxfun(@minus,abs(r),lam),0);
+tqq = 10; tqqi = 100; tqqii = 1000; % iteration for qqplot
 
 % run AMP
-Bmf = A'; % matched filter 
+Bmf = A'; % matched filter
 xhat = zeros(N,L); % initialization of signal estimate
 v = zeros(M,L); % initialization of residual
 nmse_amp = [ones(1,L);zeros(T,L)];
@@ -47,16 +47,17 @@ for t=1:T
   rvar = sum(abs(v).^2,1)/M; % denoiser input err var
   xhat = eta(rhat, alf*sqrt(rvar)); % estimate
   nmse_amp(t+1,:) = sum(abs(xhat-x).^2,1)./sum(abs(x).^2,1);
-  if qq&(mean(nmse_amp(t+1,:))<0.1), 
+  fprintf('max value of xhat at step %i is %f\n', t, max(xhat(:)));
+  if qq&(mean(nmse_amp(t+1,:))<0.1),
     figure(2)
-    subplot(131); 
-    qqplot(rhat(:,1)-x(:,1)); 
+    subplot(131);
+    qqplot(rhat(:,1)-x(:,1));
     axis('square')
-    title(['AMP at iteration ',num2str(t)]); 
+    title(['AMP at iteration ',num2str(t)]);
     drawnow;
     qq = false;
   end
-  if report&&(mean(nmse_amp(t+1,:))<10^(nmse_dB_report/10)), 
+  if report&&(mean(nmse_amp(t+1,:))<10^(nmse_dB_report/10)),
     fprintf('AMP reached NMSE=%ddB at iteration %i\n',nmse_dB_report,t);
     report = false;
   end
@@ -85,16 +86,16 @@ for t=1:Ti
   xhat_old = xhat;
   xhat = eta(rhat, lam_mf*scale); % estimate
   nmse_fista(t+1,:) = sum(abs(xhat-x).^2,1)./sum(abs(x).^2,1);
-  if qq&&(mean(nmse_fista(t+1,:))<0.1), 
+  if qq&&(mean(nmse_fista(t+1,:))<0.1),
     figure(2)
-    subplot(132); 
-    qqplot(rhat(:,1)-x(:,1)); 
+    subplot(132);
+    qqplot(rhat(:,1)-x(:,1));
     axis('square')
-    title(['FISTA at iteration ',num2str(t)]); 
+    title(['FISTA at iteration ',num2str(t)]);
     drawnow;
     qq = false;
   end
-  if report&&(mean(nmse_fista(t+1,:))<10^(nmse_dB_report/10)), 
+  if report&&(mean(nmse_fista(t+1,:))<10^(nmse_dB_report/10)),
     fprintf('FISTA reached NMSE=%ddB at iteration %i\n',nmse_dB_report,t);
     report = false;
   end
@@ -113,16 +114,17 @@ for t=1:Tii
   rhat = xhat + B*v; % denoiser input
   xhat = eta(rhat, lam_mf*scale); % estimate
   nmse_ista(t+1,:) = sum(abs(xhat-x).^2,1)./sum(abs(x).^2,1);
-  if qq&&(mean(nmse_ista(t+1,:))<0.1), 
+  fprintf('max value of xhat at step %i is %f\n', t, max(xhat(:)));
+  if qq&&(mean(nmse_ista(t+1,:))<0.1),
     figure(2)
-    subplot(133); 
-    qqplot(rhat(:,1)-x(:,1)); 
+    subplot(133);
+    qqplot(rhat(:,1)-x(:,1));
     axis('square')
-    title(['ISTA at iteration ',num2str(t)]); 
+    title(['ISTA at iteration ',num2str(t)]);
     drawnow;
     qq = false;
   end
-  if report&&(mean(nmse_ista(t+1,:))<10^(nmse_dB_report/10)), 
+  if report&&(mean(nmse_ista(t+1,:))<10^(nmse_dB_report/10)),
     fprintf('ISTA reached NMSE=%ddB at iteration %i\n',nmse_dB_report,t);
     report = false;
   end

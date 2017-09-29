@@ -5,6 +5,7 @@ import numpy as np
 import numpy.linalg as la
 import math
 import tensorflow as tf
+from scipy.io import savemat
 
 class Generator(object):
     def __init__(self,A,**kwargs):

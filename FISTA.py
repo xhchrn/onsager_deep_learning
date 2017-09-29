@@ -1,15 +1,16 @@
+
 #-*- coding: utf-8 -*-
 """
-ISTA.py
+FISTA.py
 author: chernxh@tamu.edu
-date  : 09/26/2017
+date  : 09/27/2017
 
-Python implementation of ISTA algorithm.
+Python implementation of FISTA algorithm.
 """
 
 import numpy as np
 
-def ISTA(A, X, Y, lam=0.01, Tm=10000):
+def FISTA(A, X, Y, lam=0.01, Tm=1000):
     """
 
     :A: np array, measurement matrix
@@ -24,7 +25,10 @@ def ISTA(A, X, Y, lam=0.01, Tm=10000):
     """
     m, n = A.shape
     _, l = Y.shape
-    Xhat = np.zeros_like(X).astype(np.float64) # initial estimation of X, column vectors
+    Xhat = np.zeros_like(X).astype(np.float64)
+        # initial estimation of X, column vectors
+    Xhat_old = np.zeros_like(X).astype(np.float64)
+        # intial matrix used to store estimation of X at last step
     nmse = np.concatenate(([np.ones(l)], np.zeros((Tm, l))), axis=0);
         # nmse(t, k): nmse between Xhat(:, j) and X(:, j) at time t
     sum_square_X = np.sum(np.square(X.astype(np.float64)), 0)
@@ -35,10 +39,10 @@ def ISTA(A, X, Y, lam=0.01, Tm=10000):
     tau = lam * scale
     eta = np.vectorize(lambda v: (1. if v>=0. else -1.) * max(0., abs(v) - tau)) # soft-thresholding
     for t in range(Tm):
-        Z = Y - A.dot(Xhat)
-        R = Xhat + np.dot(B, Z)
+        Z = Y - A.dot(Xhat) # residual
+        R = Xhat + np.dot(B, Z) + (np.float64(t-2)/(t+1)) * ( Xhat - Xhat_old )
+        Xhat_old = Xhat
         Xhat = eta(R)
-        print("max value in Xhat in %d step is %f" % (t, np.max(Xhat)))
         nmse[t+1,:] = np.sum(np.square(Xhat-X), 0) / sum_square_X
 
     return Xhat, np.mean(nmse, 1)
