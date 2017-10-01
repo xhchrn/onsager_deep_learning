@@ -37,12 +37,11 @@ def FISTA(A, X, Y, lam=0.01, Tm=1000):
     scale = .999 / np.linalg.norm(A.T.dot(A), ord=2)
     B   = scale * np.transpose(A)
     tau = lam * scale
-    eta = np.vectorize(lambda v: (1. if v>=0. else -1.) * max(0., abs(v) - tau)) # soft-thresholding
     for t in range(Tm):
         Z = Y - A.dot(Xhat) # residual
         R = Xhat + np.dot(B, Z) + (np.float64(t-2)/(t+1)) * ( Xhat - Xhat_old )
         Xhat_old = Xhat
-        Xhat = eta(R)
+        Xhat = np.sign(R) * np.maximum( np.abs(R) - tau, 0 )
         nmse[t+1,:] = np.sum(np.square(Xhat-X), 0) / sum_square_X
 
     return Xhat, np.mean(nmse, 1)

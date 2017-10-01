@@ -31,7 +31,6 @@ def AMP(A, X, Y, alf=1.1402, Tm=100):
     sum_square_X = np.sum(np.square(X.astype(np.float64)), 0)
     sum_square_X = sum_square_X + ( sum_square_X == 0 )
 
-    eta = np.vectorize(lambda v, tau: (1. if v>=0. else -1.) * max(0., abs(v) - tau))
     Z = np.zeros_like(Y).astype(np.float64)
         # soft-thresholding
     for t in range(Tm):
@@ -39,7 +38,7 @@ def AMP(A, X, Y, alf=1.1402, Tm=100):
         Z = Y - A.dot(Xhat) + b*Z
         lam = alf / np.sqrt(m) * linalg.norm(Z, ord=2, axis=0)
         R = Xhat + A.T.dot(Z)
-        Xhat = eta(R, lam)
+        Xhat = np.sign(R) * np.maximum( np.abs(R) - lam, 0 )
         # print("max value in Xhat in %d step is %f" % (t, np.max(Xhat)))
         nmse[t+1,:] = np.sum(np.square(Xhat-X), 0) / sum_square_X
 
