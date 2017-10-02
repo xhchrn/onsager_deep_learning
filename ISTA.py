@@ -33,12 +33,10 @@ def ISTA(A, X, Y, lam=0.01, Tm=10000):
     scale = .999 / np.linalg.norm(A.T.dot(A), ord=2)
     B   = scale * np.transpose(A)
     tau = lam * scale
-    eta = np.vectorize(lambda v: (1. if v>=0. else -1.) * max(0., abs(v) - tau)) # soft-thresholding
     for t in range(Tm):
         Z = Y - A.dot(Xhat)
         R = Xhat + np.dot(B, Z)
-        Xhat = eta(R)
-        print("max value in Xhat in %d step is %f" % (t, np.max(Xhat)))
+        Xhat = np.sign(R) * np.maximum( np.abs(R) - tau, 0 )
         nmse[t+1,:] = np.sum(np.square(Xhat-X), 0) / sum_square_X
 
     return Xhat, np.mean(nmse, 1)

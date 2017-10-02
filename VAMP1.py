@@ -10,7 +10,7 @@ Python implementation of VAMP algorithm.
 import numpy as np
 from scipy import linalg
 
-def VAMP(A, X, Y, gamma1=0.001, gammaw=1.0, Tm=100):
+def VAMP1(A, X, Y, alf=1.1402, Sigt=0.001, Sigw=1.0, Tm=100):
     """
 
     :A: np array, measurement matrix
@@ -28,37 +28,37 @@ def VAMP(A, X, Y, gamma1=0.001, gammaw=1.0, Tm=100):
     _, l = Y.shape
 
     U, s, Vh = linalg.svd(A, full_matrices=False)
-    S = linalg.diagsvd(s, len(s), len(s))
-    Ytil = gammaw * np.dot(S.T, np.dot(U.T, Y))
+    S = np.diag(s)
+    Yt = np.dot( S, np.dot( U.T, Y ))
 
     nmse = np.concatenate(([np.ones(l)], np.zeros((Tm, l))), axis=0);
         # nmse(t, k): nmse between xhat(:, j) and x(:, j) at time t
     sum_square_X = np.sum(np.square(X.astype(np.float64)), 0)
     sum_square_X = sum_square_X + ( sum_square_X == 0 )
 
-    gamma1 = gamma1 * np.ones(l).astype(np.float64)
-    R1 = np.dot(A.T, Y) # initialized R1
-    Xhat2 = np.zeros_like(X).astype(np.float64)
-    alf2  = np.zeros(l)
+    Sigt = Sigt * np.ones(l).astype(np.float64)
+    Rt = np.dot(A.T, Y) # initialized R1
+    Xht = np.zeros_like(X).astype(np.float64)
+    R   = np.zeros_like(Y).astype(np.float64)
+    Nut  = np.zeros(l)
     for t in range(Tm):
-        # Denoising step
-        Xhat1   = np.sign(R1) * np.maximum( np.abs(R1) - gamma1, 0 )
-        alf1    = np.sum(np.abs(Xhat1) != 0, axis=0) / n
-        eta1    = gamma1 / alf1
-        gamma2  = eta1 - gamma1
-        R2      = (eta1 * Xhat1 - gamma1 * R1) / gamma2
-
         # LMMSE estimation
         for i in range(l):
-            D = np.diag( 1./(gammaw * np.square(s) + gamma2[i]) )
-            Xhat2[:, i] = np.dot(np.dot(Vh.T, D), Ytil[:,i] + gamma2[i] * np.dot(Vh, R2[:, i]))
-            alf2[i]     = np.trace(D) * gamma2[i] / n
-        eta2    = gamma2 / alf2
-        gamma1  = eta2 - gamma2
-        R1      = ( eta2 * Xhat2 - gamma2 * R2 ) / gamma1
+            coef = Sigw**2 / Sigt[i]**2
+            D = np.diag( 1./( np.square(s) + coef ) )
+            Xht[:, i] = np.dot(np.dot(Vh.T, D), Yt[:,i] + coef * np.dot(Vh, Rt[:, i]))
+            Nut[i] = np.trace(D) * coef / n
+        R   = ( Xht - Nut*Rt ) / ( 1 - Nut )
+        Sig = np.sqrt( np.square(Sigt) * Nut / ( 1 - Nut ) )
+
+        # Denoising step
+        Xh   = np.sign(R) * np.maximum( np.abs(R) - alf * Sig, 0 )
+        Nu   = np.sum(np.abs(Xh) != 0, axis=0) / ( n+1 )
+        Rt   = ( Xh - Nu * R ) / ( 1 - Nu )
+        Sigt = np.sqrt( np.square(Sig) * Nu / ( 1 - Nu ) )
 
         # print("max value in Xhat in %d step is %f" % (t, np.max(Xhat)))
-        nmse[t+1,:] = np.sum(np.square(Xhat1-X), 0) / sum_square_X
+        nmse[t+1,:] = np.sum(np.square(Xh-X), 0) / sum_square_X
 
-    return Xhat1, np.mean(nmse, 1)
+    return Xh, np.mean(nmse, 1)
 
