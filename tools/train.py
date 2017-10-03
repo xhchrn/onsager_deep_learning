@@ -127,3 +127,30 @@ def do_training(training_stages,prob,savefile,ivl=10,maxit=400000,better_wait=50
         state['log'] = log
         save_trainable_vars(sess,savefile,**state)
     return sess
+
+def test(graph, model_file, layers, prob):
+    """ load model from model_file and test it with prob
+
+    :graph     : graph on which the session is run
+    :model_file: path to trained model file
+    :layers    : layers info of the graph
+    :prob      : problem to test with
+    :returns:
+        :Xhat: the output of the network
+        :anmse: aveaged nmse of each step
+
+    """
+    anmse = np.ones(6+1).astype(np.float64)
+    nmse_denom = np.sum( np.square( prob.xval.astype(np.float64) ), 0 )
+    nmse_denom = nmse_denom + ( nmse_denom == 0 )
+    with tf.Session(graph=graph) as sess:
+        sess.run(tf.global_variables_initializer())
+        state = load_trainable_vars(sess, model_file)
+
+        for i, (_, xhat_, _) in enumerate(layers):
+            xhat = sess.run(xhat_, feed_dict={prob.y_: prob.yval})
+            nmse = np.sum( np.square( xhat - prob.xval ), 0 ) / nmse_denom
+            anmse[i] = np.mean( nmse )
+
+    return xhat, anmse
+

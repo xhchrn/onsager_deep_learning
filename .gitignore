@@ -4,6 +4,7 @@
 *.swp
 *.ipynb
 .ipynb_checkpoints/
+plots/
 probs/
 models/
 __pycache__/
